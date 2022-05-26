@@ -1,0 +1,51 @@
+2022-05-22 10:02:56.121 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 读取到的字节数 10
+2022-05-22 10:02:56.125 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 1
+2022-05-22 10:02:56.125 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 2
+2022-05-22 10:02:56.126 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 3
+2022-05-22 10:02:56.126 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 4
+2022-05-22 10:02:56.126 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 5
+2022-05-22 10:02:56.126 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 6
+2022-05-22 10:02:56.126 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 7
+2022-05-22 10:02:56.126 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 8
+2022-05-22 10:02:56.126 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 9
+2022-05-22 10:02:56.126 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 a
+2022-05-22 10:02:56.126 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 b
+2022-05-22 10:02:56.126 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 c
+2022-05-22 10:02:56.126 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 d
+2022-05-22 17:53:04.186 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 17:54:35.012 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 17:56:53.289 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:01:32.082 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:01:48.474 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:03:01.665 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:03:31.574 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:03:45.304 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:04:08.404 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:04:37.091 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:05:09.231 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:06:07.057 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:37:54.347 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 写入数据：
+2022-05-22 18:39:01.444 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:39:11.357 [main] DEBUG i.n.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+2022-05-22 18:43:45.332 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 读取到的字节数 3
+2022-05-22 18:43:45.337 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 b
+2022-05-22 18:43:45.337 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 c
+2022-05-22 18:43:45.337 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 d
+2022-05-22 18:44:13.651 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 读取到的字节数 3
+2022-05-22 18:44:13.655 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 b
+2022-05-22 18:44:13.656 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 c
+2022-05-22 18:44:13.656 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 d
+2022-05-22 18:44:49.470 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 读取到的字节数 10
+2022-05-22 18:44:49.474 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 1
+2022-05-22 18:44:49.474 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 2
+2022-05-22 18:44:49.475 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 3
+2022-05-22 18:44:49.475 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 4
+2022-05-22 18:44:49.475 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 5
+2022-05-22 18:44:49.475 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 6
+2022-05-22 18:44:49.475 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 7
+2022-05-22 18:44:49.475 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 8
+2022-05-22 18:44:49.475 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 9
+2022-05-22 18:44:49.476 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 a
+2022-05-22 18:44:49.477 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 b
+2022-05-22 18:44:49.477 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 c
+2022-05-22 18:44:49.477 [main] DEBUG com.walkkong.netty.c1.TestByteBuffer - 实际字节 d

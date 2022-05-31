@@ -1,4 +1,4 @@
-package com.walkkong.netty.c4.selector;
+package com.walkkong.netty.c4.selector.msgbound;
 
 import com.walkkong.netty.c1.ByteBufferUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -6,79 +6,88 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
-import java.util.ArrayList;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 /**
  *
- * nio selector
+ * nio selector 消息边界-容量超出
  * @author liyanan
  * @date 2022/05/27 16:14
  **/
 @Slf4j
 public class Server {
     public static void main(String[] args) throws IOException {
-        // 1. 建立 selector
+
         Selector selector = Selector.open();
         ServerSocketChannel ssc = ServerSocketChannel.open();
         ssc.configureBlocking(false);
 
-        // 2. 建立 selector 和 channel 的联系（注册）
-        // SelectionKey 就是将来事件发生后，通过它可以知道事件和哪个 channel 的事件
         SelectionKey sscKey = ssc.register(selector, SelectionKey.OP_ACCEPT);
-        //  Key 只关注 Accept 事件
-//        sscKey.interestOps(SelectionKey.OP_ACCEPT);
         log.debug("register key: {}", sscKey);
         ssc.bind(new InetSocketAddress(8080));
         while (true) {
-          // 3. select 方法，没有事件发生，线程阻塞；有事件，才会恢复运行
-            // select 事件未处理时，不会阻塞，必须处理和取消事件
             selector.select();
-          // 处理事件，返回所有可用事件
             Set<SelectionKey> selectionKeys = selector.selectedKeys();
             Iterator<SelectionKey> selectionKeyIterator = selectionKeys.iterator();
             while (selectionKeyIterator.hasNext()) {
                 SelectionKey key = selectionKeyIterator.next();
                 log.debug("key: {}", key);
-                // 区分时间类型
                 if (key.isAcceptable()) {
                     ServerSocketChannel channel = (ServerSocketChannel) key.channel();
                     SocketChannel sc = channel.accept();
                     log.debug("{}", sc);
                     sc.configureBlocking(false);
-                    SelectionKey scKey = sc.register(selector, SelectionKey.OP_READ);
-//                    scKey.interestOps(SelectionKey.OP_READ);
+                    ByteBuffer buffer = ByteBuffer.allocate(16);
+                    // 将一个 bytebuffer 当做附件（attachment）
+                    SelectionKey scKey = sc.register(selector, 0, buffer);
+                    scKey.interestOps(SelectionKey.OP_READ);
                     log.debug("scKey {}", scKey);
                 } else if (key.isReadable()) {
-                    // 如果时 read，需要做读取数据
                     try {
                         SocketChannel channel = (SocketChannel) key.channel();
-                        ByteBuffer buffer = ByteBuffer.allocate(16);
-                        int read = channel.read(buffer);
+                        // 获取附件
+                        ByteBuffer attachment = (ByteBuffer) key.attachment();
+                        int read = channel.read(attachment);
                         if (read == -1) {
-                            // 正常断开，read 方法返回 -1
                             key.channel();
                             channel.close();
                         } else {
-                            buffer.flip();
-                            ByteBufferUtil.debugRead(buffer);
+                            split(attachment);
+                            if (attachment.position() != 0 && attachment.limit() == attachment.position()) {
+                                ByteBuffer newBuffer = ByteBuffer.allocate(attachment.capacity() * 2);
+                                attachment.flip();
+                                newBuffer.put(attachment);
+                                // 替换带 key 原有的 attachment
+                                key.attach(newBuffer);
+                            }
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
-                        // 客户端断开了，需要将 key channel，其实就是从 SelectionKey 集合中真正删除。
                         key.cancel();
                     }
                 }
-                // 处理 key 后，要删除，否则下次处理会有问题
                 selectionKeyIterator.remove();
-//                key.cancel();
-
             }
         }
+    }
 
-
+    public static void split(ByteBuffer source) {
+        source.flip();
+        for (int i = 0; i < source.limit(); i++) {
+            byte b = source.get(i);
+            if (b == '\n') {
+                int len = i + 1 - source.position();
+                byte[] bytes = new byte[len];
+                source.get(bytes);
+                ByteBuffer target = ByteBuffer.wrap(bytes);
+                ByteBufferUtil.debugAll(target);
+            }
+        }
+        source.compact();
     }
 }

@@ -5,13 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * @author liyanan
@@ -23,6 +17,7 @@ public class WriteEventClient {
         SocketChannel sc = SocketChannel.open();
         sc.connect(new InetSocketAddress("localhost", 8080));
         int readCount = 0;
+        log.info("socket client start ......");
         while (true) {
             ByteBuffer byteBuffer = ByteBuffer.allocate(1024 * 1024);
             readCount += sc.read(byteBuffer);

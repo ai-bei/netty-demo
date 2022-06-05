@@ -18,7 +18,7 @@ import java.util.Set;
  * @date 2022/06/02 20:38
  **/
 @Slf4j
-public class WriteEventServer {
+public class WriteEventServer1 {
     public static void main(String[] args) throws IOException {
         Selector selector = Selector.open();
         ServerSocketChannel ssc = ServerSocketChannel.open();
@@ -26,7 +26,6 @@ public class WriteEventServer {
         ssc.configureBlocking(false);
         ssc.register(selector, SelectionKey.OP_ACCEPT);
         ssc.bind(new InetSocketAddress(8080));
-        log.info("socket server start ......");
         while (true) {
             selector.select();
 
@@ -44,9 +43,26 @@ public class WriteEventServer {
                         sb.append("a");
                     }
                     ByteBuffer buffer = Charset.defaultCharset().encode(sb.toString());
-                    while (buffer.hasRemaining()) {
-                        int write = sc.write(buffer);
-                        log.info("{}", write);
+                    // 由循环改为判断，解决没有读完的问题
+                    int write = sc.write(buffer);
+                    log.info("{}", write);
+                    if(buffer.hasRemaining()) {
+                        // 不可读时，再写入
+                        scKey.interestOps(scKey.interestOps() + SelectionKey.OP_WRITE);
+                        // buffer 作为 key 的附件
+                        scKey.attach(buffer);
+                    }
+
+                } else if (key.isWritable()) {
+                    ByteBuffer bf = (ByteBuffer) key.attachment();
+                    SocketChannel channel = (SocketChannel) key.channel();
+                    int write = channel.write(bf);
+                    log.info("{}", write);
+
+                    if (!bf.hasRemaining()) {
+                        key.interestOps(key.interestOps() - SelectionKey.OP_WRITE);
+                        // 解绑附件
+                        key.attach(null);
                     }
                 }
             }

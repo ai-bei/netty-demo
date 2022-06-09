@@ -60,7 +60,7 @@ public class MultiThreadServer {
     static class Worker implements Runnable{
         // 运行线程
         private Thread thread;
-        private volatile Selector selector;
+        private Selector selector;
         private String name;
         private volatile boolean start = false;
 

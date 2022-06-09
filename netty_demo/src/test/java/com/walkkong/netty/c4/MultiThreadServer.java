@@ -1,15 +1,17 @@
 package com.walkkong.netty.c4;
 
 import com.walkkong.netty.c1.ByteBufferUtil;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author liyanan
@@ -18,17 +20,18 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Slf4j
 public class MultiThreadServer {
     public static void main(String[] args) throws IOException {
-        Thread.currentThread().setName("boss");
+        Thread.currentThread().setName("Boss");
         ServerSocketChannel ssc = ServerSocketChannel.open();
         ssc.configureBlocking(false);
-
-        Selector boss = Selector.open();
-        SelectionKey bossKey = ssc.register(boss, 0, null);
-        bossKey.interestOps(SelectionKey.OP_ACCEPT);
         ssc.bind(new InetSocketAddress(8080));
-        // 创建固定数量的 worker 并初始化
-        Worker worker = new Worker("worker-0");
-//        worker.register();
+        Selector boss = Selector.open();
+        ssc.register(boss, SelectionKey.OP_ACCEPT);
+
+        Worker[] workers = new Worker[2];
+        for (int i = 0; i < workers.length; i++) {
+            workers[i] = new Worker("worker-" + i);
+        }
+        AtomicInteger atomicInteger = new AtomicInteger();
         while (true) {
             boss.select();
             Iterator<SelectionKey> iter = boss.selectedKeys().iterator();
@@ -42,8 +45,7 @@ public class MultiThreadServer {
                         log.debug("connected...{}", sc.getRemoteAddress());
                         // 关联 selector
                         log.debug("before register...{}", sc.getRemoteAddress());
-                        worker.register(sc);
-//                    sc.register(worker.selector, SelectionKey.OP_READ, null);
+                        workers[atomicInteger.get() % workers.length].register(sc);
                         log.debug("after register...{}", sc.getRemoteAddress());
                     }
                 } catch (Exception e) {
@@ -58,11 +60,9 @@ public class MultiThreadServer {
     static class Worker implements Runnable{
         // 运行线程
         private Thread thread;
-        private Selector selector;
+        private volatile Selector selector;
         private String name;
         private volatile boolean start = false;
-        // 队列解决两个线程数据传递的问题
-        private ConcurrentLinkedQueue<Runnable> queue = new ConcurrentLinkedQueue<>();
 
         public Worker(String name) {
             this.name = name;
@@ -72,25 +72,14 @@ public class MultiThreadServer {
         public void register(SocketChannel sc) throws IOException {
             if (!start) {
                 thread = new Thread(this, name);
-                thread.start();
-
                 selector = Selector.open();
-
+                thread.start();
                 start = true;
             }
-            /*queue.add(() -> {
-                try {
-                    sc.register(selector, SelectionKey.OP_READ, null);
-                } catch (ClosedChannelException e) {
-                    e.printStackTrace();
-                }
-            });
-            // 唤醒 selector
-            selector.wakeup();*/
-
             // 唤醒 selector
             selector.wakeup();
-            sc.register(selector, SelectionKey.OP_READ, null);
+            sc.register(selector, SelectionKey.OP_READ);
+
         }
 
         @Override
@@ -98,10 +87,6 @@ public class MultiThreadServer {
             while (true) {
                 try {
                     selector.select();              // 阻塞，事件出现才会执行
-                /*    Runnable task = queue.poll();
-                    if (!Objects.isNull(task)) {
-                        task.run();                     // 执行注册
-                    }*/
                     Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
                     while (iter.hasNext()) {
                         SelectionKey key = iter.next();
@@ -110,7 +95,7 @@ public class MultiThreadServer {
                             if (key.isReadable()) {
                                 ByteBuffer buffer = ByteBuffer.allocate(16);
                                 SocketChannel channel = (SocketChannel) key.channel();
-                                log.debug("read...{}", channel.getRemoteAddress());
+                                log.debug(Thread.currentThread().getName() + " read...{}", channel.getRemoteAddress());
                                 channel.read(buffer);
                                 buffer.flip();
                                 ByteBufferUtil.debugAll(buffer);
